@@ -1,0 +1,15 @@
+Received: from zarafa.example.com (localhost [127.0.0.1])
+	by example.com (Postfix) with ESMTP id D23941000F1
+	for <alice@example.com>; Mon, 24 Feb 2014 14:43:33 +0000 (UTC)
+Subject: =?utf-8?Q?WG=3A_Geh=C3=A4lter_2014?=
+From: =?utf-8?Q?Dave?= <dave@example.com>
+To: =?utf-8?Q?Alice?= <alice@example.com>
+Date: Mon, 24 Feb 2014 14:43:33 +0000
+Mime-Version: 1.0
+Content-type: text/plain; charset=UTF-8
+X-Priority: 3 (Normal)
+X-Mailer: Zarafa 7.1.8-43801
+Message-Id: <zarafa.530b5a95.4432.38974772466c0af7@zarafa.example.com>
+Content-Transfer-Encoding: quoted-printable
+
+Hello world

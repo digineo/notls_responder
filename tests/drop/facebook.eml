@@ -1,0 +1,33 @@
+Received: from mx.example.com (mx.example.com [91.202.42.42])
+	(using TLSv1 with cipher ADH-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by example.com (Postfix) with ESMTPS id 63C6CD0219
+	for <foo@example.com>; Sun, 16 Feb 2014 20:16:45 +0000 (UTC)
+Authentication-Results: example.com; dkim=pass (1024-bit key; insecure key)
+	header.i=@facebookmail.com; x-dkim-adsp=none (insecure policy)
+Received-SPF: Pass (sender SPF authorized) identity=mailfrom; client-ip=66.220.155.156; helo=mx-out.facebook.com; envelope-from=notification+zrdo3ed6fe=z@facebookmail.com; receiver=foo@example.com 
+Received: from mx-out.facebook.com (outmail022.ash2.facebook.com [66.220.155.156])
+	by mx.example.com (Postfix) with ESMTPS id 1AA2E606705
+	for <foo@example.com>; Sun, 16 Feb 2014 21:16:44 +0100 (CET)
+Received: from facebook.com (U/XnRDCnGitsTb4FxCNCJ1ZlIafMG4BIzz1RFHuPU8gs3Az4KXjth3FpJb/IA6mx 10.158.104.81)
+ by facebook.com with Thrift id 4056b6e4974711e38ef00002c9550730-4edfaef0;
+ Sun, 16 Feb 2014 12:16:42 -0800
+X-Facebook: from 2401:db00:2110:303a:face:0:1:0 ([MTI3LjAuMC4x]) 
+	by www.facebook.com with HTTP (ZuckMail);
+Date: Sun, 16 Feb 2014 12:16:42 -0800
+To: Foo <foo@example.com>
+From: "Facebook" <notification+zrdo3ed6fe=z@facebookmail.com>
+Reply-to: noreply <noreply@facebookmail.com>
+Subject: Hast du dich von einem neuen Ort aus bei Facebook angemeldet?
+Message-ID: <64b534e5e1a75760dd623e662b026499@www.facebook.com>
+X-Priority: 3
+X-Mailer: ZuckMail [version 1.00]
+Errors-To: notification+zrdo3ed6fe=z@facebookmail.com
+X-Facebook-Notify: roadblock; mailid=93b19d8G5ae39823074dG0G7bG2f2a8a95
+X-FACEBOOK-PRIORITY: 0
+X-Auto-Response-Suppress: All
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+
+Hello World

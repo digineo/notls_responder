@@ -1,0 +1,14 @@
+Received: from s098.okserver.org (unknown [184.12.136.198])
+	by example.com (Postfix) with ESMTP id C0A00D0086
+	for <test@example.com>; Tue, 11 Feb 2014 21:40:11 +0000 (UTC)
+Received: by s098.okserver.org (Postfix, from userid 33)
+	id AD9DC202CC; Tue, 11 Feb 2014 21:40:10 +0000 (UTC)
+To: Test <test@example.com>
+From: MediaWiki Mail <sysadmin@okfn.org>
+Date: Tue, 11 Feb 2014 21:40:10 +0000
+MIME-Version: 1.0
+Content-type: text/plain; charset=UTF-8
+Message-ID: <wiki_opendataday_org.52fa98ba894224.06349815@wiki.opendataday.org>
+Content-Transfer-Encoding: quoted-printable
+
+Hello World
