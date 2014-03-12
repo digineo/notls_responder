@@ -2,11 +2,14 @@
 
 basedir=`dirname "$0"`
 script=$basedir/../tls_responder.py
-status=0
+
+# Run unit tests
+$basedir/tests.py
+status=$!
 
 function check {
   echo -n "$1 ... "
-  output=`$script < $1`
+  output=`DRY=1 $script < $1`
   if [[ "$output" =~ "$2" ]]; then
     echo "success"
   else
@@ -22,7 +25,7 @@ done
 
 # mails to reply
 for file in $basedir/reply/*; do
-  check $file "replied"
+  check $file "Subject: "
 done
 
 # everthing done

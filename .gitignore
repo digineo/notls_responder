@@ -1,5 +1,8 @@
 *.py[cod]
 
+/email
+/tests/.tmp
+
 # C extensions
 *.so
 
