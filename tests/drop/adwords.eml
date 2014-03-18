@@ -1,6 +1,4 @@
 Received: from mail-yk0-x246.google.com (mail-yk0-x246.google.com [IPv6:2607:f8b0:4002:c07::246])
-	(using TLSv1 with cipher ECDHE-RSA-RC4-SHA (128/128 bits))
-	(No client certificate requested)
 	by example.com (Postfix) with ESMTPS id 39D5B1000A6
 	for <google@example.com>; Tue,  4 Feb 2014 14:42:57 +0000 (UTC)
 Authentication-Results: example.com; dkim=pass (2048-bit key; insecure key)

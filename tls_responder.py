@@ -1,40 +1,19 @@
-#!/usr/bin/python3 
+#!/usr/bin/env python3
 import sys
 import os
 import re
-#import pdb
 from email.message import Message
 from email.parser import HeaderParser
-from smtplib import SMTP
+from email.utils import parseaddr
+from email.mime.text import MIMEText
+from smtplib import SMTP, SMTPException
+import re
 
-class MailSender(object):
-    """docstring for MailSender"""
-    def __init__(self, to, sender, body):
-        self.reply_address = to
-        self.returnsender = sender
-        self.msg = body
-    def deliver(self):
-        #Send Mail
-        received = []
-        try:
-            s = smtplib.SMTP('localhost')
-            received = s.sendmail(self.reply_address, self.returnsender, self.msg)
-        finally:
-            s.quit()
-        return received
-
-class TestMailSender(MailSender):
-    def __init__(self, to, sender, body):
-        self.reply_address = to
-        self.returnsender = sender
-        self.msg = body
-    def deliver(self):
-        return [self.reply_address, self.returnsender, self.msg]
-        
 
 class TLSresponder(object):
     """This Class checks if a given mail should be responded to"""
     # check noreply and system addresses
+
     noreplies = [
         "mailer-daemon",
         "noreply@",
@@ -79,13 +58,10 @@ class TLSresponder(object):
         'X-Whups-Generated',
         'X-Cron-Env',
         ]
-
-    def __init__(self, incommingmail, mailer=MailSender):
+    def __init__(self, incommingmail):
         #read an parse mail header
-        self.mail = open(incommingmail, "r")
-        self.mailer = mailer
         parser    = HeaderParser()
-        self.orig_msg  = parser.parsestr(self.mail.read())
+        self.orig_msg  = parser.parsestr(incommingmail)
         # read subject
         self.orig_subject = self.orig_msg.get('Subject')
         # read received, ignore all but last
@@ -93,126 +69,149 @@ class TLSresponder(object):
         # read sender
         self.returnsender = self.orig_msg['Return-Path'] or self.orig_msg['From']
         #replay adress
-        self.reply_address = "test@testmail.test"
+        self.sender_domain = self.get_domain(self.returnsender)
+        self.orig_receiver = self.orig_msg.get("To")
+        self.reply_address = "noreply@{}".format(self.get_domain(self.orig_receiver))
+        
+    def get_domain(self, addr):
+        sender = parseaddr(addr)[1]
+        sender = sender.split("@")[-1] 
+        return sender
 
-
-    def send_mail(self):
+    def send_mail(self, dry=0):
+        msg = self.create_message()
+        received = []
+        if dry==1:
+           return  msg
         try:
-            os.mkdir(path)
-        except:
-            pass
-        try:
-            self.__abort_reason()
-            msg = self.create_message()
-            #self.create_mail(msg, path)
-            mailer = self.mailer(self.reply_address, self.returnsender, msg.as_string())
-            received = mailer.deliver()
-            
-            return received
-            #print "TLS_Response send"
-        except AbortReply("Some Reason"), e:
-            raise
-
+            s = SMTP('localhost')
+            s.ehlo()
+            delivered = s.sendmail(self.reply_address, self.returnsender, msg.as_string())
+            s.quit()  
+        except ConnectionRefusedError:
+            pass           
+        return received
+        received = mailer.deliver()
+        return delivered
+        
 
     def __abort(self, reason):
-        reason = ("dropped, %s" % reason)
+        reason = ("dropped, {}".format(reason))
         raise AbortReply(reason)
-        # must exit with zero
-        # otherwise the MTA retries the delivery
-        #sys.exit(0)
+
 
     # aborts if the given header matches the given value
     def __abort_if_header(self, name, disallowed):
         value = self.orig_msg.get(name)
-        if value != None and value.lower() in disallowed:
-            try:  
-                abort("disallowed header: %s" % name);
-            except AbortReply("some Reason"), e:
-                raise DisallowedHeaderException(e.reason)
+        if value != None and value.lower() in disallowed: 
+            self.__abort("disallowed header: {}".format(name));
+
 
     # aborts if the given header exists and does NOT match the given value
     def __abort_if_header_not(self, name, disallowed):
         value = self.orig_msg.get(name)
         if value != None and value.lower() not in disallowed:
-            try:  
-                self.__abort("disallowed header: %s" % name);
-            except AbortReply("some Reason"), e:
-                raise DisallowedHeaderException(e.reason)
-
+            self.__abort("disallowed header: {}".format(name));
 
     def __abort_reason(self):
-        try:
-            reason = None
-            if not self.orig_subject:
-                self.__abort("subject missing");
+        reason = None
+        if not self.orig_subject:
+            self.__abort("subject missing");
 
+    
+        # check if locally delivered
+        if "localhost" in self.orig_received:
+            self.__abort("locally delivered")
+
+        #check if tls encrypted
+        if self.orig_received.find("TLS")>-1:
+            self.__abort("sent with tls")
+
+        #abort if sender and receiver have the same adress
+        if self.returnsender == self.orig_receiver:
+            self.__abort("same mail adress as sender")
         
-            # check if locally deliveres
-            if "localhost" in self.orig_received:
-                self.__abort("locally delivered")
-
-            #check if tls encrypted
-            if self.orig_received.find("TLS")>-1:
-                self.__abort("is send with tls")
-
-            
-            
-            self.__abort_if_header_not('Auto-Submitted', 'no')
-            self.__abort_if_header('X-Autogenerated', 'reply')
-            self.__abort_if_header('X-Auto-Response-Suppress', 'all')
-            self.__abort_if_header('X-Mailer', 'mediawiki mailer')
-            self.__abort_if_header('X-Spam-Flag', 'yes')
-            self.__abort_if_header('Precedence', ['list', 'bulk', 'junk'])
-            self.__abort_if_header('Content-Description', 'delivery report')
+        #check for disallowed Headers
+        self.__abort_if_header_not('Auto-Submitted', 'no')
+        self.__abort_if_header('X-Autogenerated', 'reply')
+        self.__abort_if_header('X-Auto-Response-Suppress', 'all')
+        self.__abort_if_header('X-Mailer', 'mediawiki mailer')
+        self.__abort_if_header('X-Spam-Flag', 'yes')
+        self.__abort_if_header('Precedence', ['list', 'bulk', 'junk'])
+        self.__abort_if_header('Content-Description', 'delivery report')
 
 
-            for name in TLSresponder.headers:
-                if self.orig_msg.get(name) != None:
-                    self.__abort("header present: %s" % name)
+        for name in TLSresponder.headers:
+            if self.orig_msg.get(name) != None:
+                self.__abort("header present: {}".format(name))
 
 
 
-            sender_lower = self.returnsender.lower()
-            for noreply in TLSresponder.noreplies:
-                if noreply in sender_lower:
-                    self.__abort("disallowed address")
-        except AbortReply, e:
-            raise
-        except DisallowedHeaderException, e:
-            raise
-        else:
-            pass
+        sender_lower = self.returnsender.lower()
+        for noreply in TLSresponder.noreplies:
+            if noreply in sender_lower:
+                self.__abort("disallowed address")
 
-    # TODO
 
 
     #create mail
     def create_message(self):
+        self.__abort_reason()
+        mail_payload = [
+        "Insecure transmission / Unsichere Zustellung", 
+        """(deutsche Version unten) 
 
+We've recently received an mail from your mail address through an insecure connection.
+This mail could have been read or altered by a third party.
+Please contact your mail server administrator and ask him to fix this security issue.
+You may find further information at:
+
+http://ssl-tools.net/mailservers/{0}
+
+
+(english version above)
+
+Wir haben soeben eine E-Mail ueber eine unsichere Verbindung von Ihrer Adresse erhalten.
+Die E-Mail kann daher unbemerkt von Dritten mitgelesen und veraendert worden sein.
+Bitte kontaktieren Sie den Administrator Ihres Mailservers und fordern Sie ihn auf, 
+dieses Sicherheitsproblem zu beheben.
+Die folgende Seite kann dabei hilfreich sein:
+
+http://de.ssl-tools.net/mailservers/{0}
+
+-- 
+This mail has been generated by noTLS Responder
+https://github.com/digineo/notls_responder
+""".format(self.sender_domain)]
         msg = Message()
-        msg.set_payload("You send an unencrypted mail please consider TLS-encryption for your MailServer")
-        msg["Subject"] = "SPAMSPAMSPAM" 
+        msg["Subject"] = "{0}: {1}".format(mail_payload[0], self.orig_subject)
         msg["From"] = self.reply_address
         msg["To"] = self.returnsender
+        msg["Precedence"] = "bulk"
+        msg.set_payload(mail_payload[1])
         return msg
 
-    def create_mail(self, msg,path):
-        email = open("%s/tls_respons.eml" % path,"w")
-        email.write(msg.as_string())
-        email.close()
-      
+
 class AbortReply(Exception):
-    """docstring for AbortError"""
+    """Thrown if EMail should not be responded to"""
     def __init__(self, reason):
         self.reason = reason
     def __str__(self):
-        return "No Reply: %s" % self.reason
+        return "No Reply: {}".format(self.reason)
 
-class DisallowedHeaderException(AbortReply):
-    pass
-
-
-# TODO
-# Wenn nicht DRY=1, dann Mail von STDIN parsen und Ergebnis auf STDOUT ausgeben
 # Wenn Test-Framework geladen, nichts tun
-# Ansonsten Mail von STDIN parsen und bei Bedarf Mail per localhost versenden
+if __name__ == "__main__":
+    stdin = sys.stdin.read()
+    dry = os.environ.get('DRY')
+    response = TLSresponder(stdin)
+    # Mail von STDIN parsen und bei Bedarf Mail per localhost versenden
+    
+    try:
+        if not dry == '1':
+            print(response.send_mail())
+        else:
+            # Wenn DRY=1, dann Mail von STDIN parsen und Ergebnis auf STDOUT ausgeben
+            print(response.send_mail(1))
+    except AbortReply as e:
+        print(e.reason)
+    sys.exit()

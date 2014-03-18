@@ -1,0 +1,37 @@
+Received: from mx.somehoster.net (unknown [109.69.123.162])
+	by example.com (Postfix) with ESMTP id EC5095AAB
+	for <bob@example.com>; Thu, 12 Jan 2012 23:54:51 +0000 (UTC)
+Received: by mx.somehoster.net (Postfix)
+	id B12656016; Fri, 13 Jan 2012 00:54:51 +0100 (CET)
+Date: Fri, 13 Jan 2012 00:54:51 +0100 (CET)
+From: MAILER-DAEMON@mx.somehoster.net (Mail Delivery System)
+Subject: Undelivered Mail Returned to Sender
+To: bob@example.com
+Auto-Submitted: No
+MIME-Version: 1.0
+Content-Type: multipart/report; report-type=delivery-status;
+	boundary="4D04C6015.1326412491/mx.somehoster.net"
+Message-Id: <20120112235451.B12656016@mx.somehoster.net>
+
+This is a MIME-encapsulated message.
+
+--4D04C6015.1326412491/mx.somehoster.net
+Content-Description: Notification
+Content-Type: text/plain; charset=us-ascii
+
+This is the mail system at host mx.somehoster.net.
+
+I'm sorry to have to inform you that your message could not
+be delivered to one or more recipients. It's attached below.
+
+For further assistance, please send mail to postmaster.
+
+If you do so, please include this problem report. You can
+delete your own text from the attached returned message.
+
+                   The mail system
+
+<alice@example.com>: Name service error for name=example.com type=MX:
+    Malformed or unexpected name server reply
+
+--4D04C6015.1326412491/mx.somehoster.net--

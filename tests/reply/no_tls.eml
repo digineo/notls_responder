@@ -1,15 +1,15 @@
 Received: from dave@example.com (dave@example.com [85.119.155.123])
 	by example.com (Postfix) with ESMTP id CA0A31000F1
-	for <alice@example.com>; Mon, 24 Feb 2014 13:07:48 +0000 (UTC)
+	for <alice@wikipedia.org>; Mon, 24 Feb 2014 13:07:48 +0000 (UTC)
 Received: from [192.168.1.101] (p5DC657D0.dip0.t-ipconnect.de [93.198.87.123])
 	by dave@example.com (Postfix) with ESMTPSA id 71F383E028B2
-	for <alice@example.com>; Mon, 24 Feb 2014 14:07:48 +0100 (CET)
+	for <alice@wikipedia.org>; Mon, 24 Feb 2014 14:07:48 +0100 (CET)
 Message-ID: <530B43EE.dave@example.com>
 Date: Mon, 24 Feb 2014 14:06:54 +0100
 From: Dave <dave@example.com>
 User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:24.0) Gecko/20100101 Thunderbird/24.3.0
 MIME-Version: 1.0
-To: Alice <alice@example.com>
+To: Alice <alice@wikipedia.org>
 Subject: Re: Fwd: SSL-dave@example.com
 References: <530624EA.4060509@example.com> <530A42E1.dave@example.com> <530AFCC1.dave@example.com>
 In-Reply-To: <530AFCC1.dave@example.com>
