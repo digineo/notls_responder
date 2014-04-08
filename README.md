@@ -1,7 +1,7 @@
 NoTLS Responder
 ===============
 
-[![Build Status](https://travis-ci.org/digineo/notls_responder.png?branch=master)](https://travis-ci.org/digineo/notls_responder)
+[![Build Status](https://travis-ci.org/digineo/notls_responder.svg?branch=master)](https://travis-ci.org/digineo/notls_responder)
 
 This autoresponder script automatically replies all messages that are sent through an unencrypted connection to your mail server.
 The intension for using this script is to raise your communication partners awareness for the risk of using using non-encrypted connections and to propagate the secure transport of emails.
